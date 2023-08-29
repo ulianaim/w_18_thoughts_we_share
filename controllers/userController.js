@@ -2,7 +2,7 @@ const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
 
 module.exports = {
-  // Get all students
+  // Get all users
   async getUsers(req, res) {
     try {
       const users = await User.find();
@@ -13,7 +13,7 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
-  // Get a single student
+  // Get a single user
   async getSingleUser(req, res) {
     try {
       const users = await User.findOne({ _id: req.params.userId })
@@ -30,7 +30,7 @@ module.exports = {
       return res.status(500).json(err);
     }
   },
-  // create a new student
+  // create a new user
   async createUser(req, res) {
     try {
       const user = await User.create(req.body);
@@ -39,6 +39,8 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
+  // update user
   async updateUser(req, res) {
     try {
       const user = await User.findOneAndUpdate({_id:req.params.userId}, {$set: req.body});
@@ -48,7 +50,7 @@ module.exports = {
     }
   },
 
-  // Delete a student and remove them from the course
+  // Delete a user and remove any thoughts assosiated with it
   async deleteUser(req, res) {
     try {
       const user = await User.findOneAndRemove({ _id: req.params.userId });
@@ -75,6 +77,8 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
+  // Add new friend to user's friend list
   async createFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate({_id:req.params.userId}, {$addToSet:{friends: req.params.friendId}});
@@ -84,6 +88,7 @@ module.exports = {
     }
   },
 
+  // Delete friend from user's friend list
   async deleteFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate({_id:req.params.userId}, {$pull:{friends: req.params.friendId}});
