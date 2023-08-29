@@ -8,6 +8,7 @@ module.exports = {
 
       res.json(thoughts);
     } catch (err) {
+      console.log(err)
       res.status(500).json(err);
     }
   },
@@ -30,7 +31,15 @@ module.exports = {
   async createThought(req, res) {
     try {
       const thought = await Thought.create(req.body);
-      res.json(thought);
+  
+
+      const userThought = await User.findOneAndUpdate(
+        { _id: req.body.usertId },
+        { $push: {thoughts: thought._id} },
+        { runValidators: true, new: true }
+      );
+      res.json(userThought)
+
     } catch (err) {
       console.log(err);
       return res.status(500).json(err);
@@ -71,9 +80,10 @@ async updateThought(req, res) {
 // Create reaction stored in single tought
   async createReaction(req, res) {
     try {
-      const thought = await Thought.findOneAndUpdate({_id:req.params.thoughtId}, {$addToSet:{reactions: req.params.reactionId}});
+      const thought = await Thought.findOneAndUpdate({_id:req.params.thoughtId}, {$addToSet:{reactions: req.body}});
       res.json(thought);
     } catch (err) {
+      console.log(err)
       res.status(500).json(err);
     }
   },
@@ -81,7 +91,7 @@ async updateThought(req, res) {
   // Delete reaction by the reaction's id
   async deleteReaction(req, res) {
     try {
-      const thought = await Thought.findOneAndRemove({_id:req.params.reactionId});
+      const thought = await Thought.findOneAndUpdate({_id:req.params.thoughtId}, {$pull:{reactions: req.params.reactionId}});
       res.json(thought);
     } catch (err) {
       res.status(500).json(err);
