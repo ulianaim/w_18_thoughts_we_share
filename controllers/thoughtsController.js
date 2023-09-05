@@ -58,8 +58,9 @@ async updateThought(req, res) {
       res.status(404).json({ message: 'No thoughts were found with this id!' });
     }
 
-    res.json(course);
+    res.json(thought);
   } catch (err) {
+    console.log(err)
     res.status(500).json(err);
   }
 },
@@ -91,7 +92,7 @@ async updateThought(req, res) {
   // Delete reaction by the reaction's id
   async deleteReaction(req, res) {
     try {
-      const thought = await Thought.findOneAndUpdate({_id:req.params.thoughtId}, {$pull:{reactions: req.params.reactionId}});
+      const thought = await Thought.findOneAndUpdate({_id:req.params.thoughtId}, { $pull: { reactions: { reactionId: req.params.reactionId } } });
       res.json(thought);
     } catch (err) {
       res.status(500).json(err);
